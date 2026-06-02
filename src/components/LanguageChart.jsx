@@ -1,5 +1,10 @@
 import { useMemo } from 'react'
+import { Bar } from 'react-chartjs-2'
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from 'chart.js'
 import { theme, card } from '../styles'
+
+// Register Chart.js components
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend)
 
 const LANG_COLORS = {
   JavaScript: '#f1e05a',
@@ -26,6 +31,9 @@ const styles = {
     padding: '20px',
     marginTop: '24px',
     textAlign: 'left',
+    display: 'flex',
+    flexDirection: 'column',
+    height: '400px',
   },
   title: {
     fontSize: theme.fontSizes.base,
@@ -33,80 +41,83 @@ const styles = {
     color: theme.colors.text,
     margin: '0 0 16px 0',
   },
-  bar: {
-    display: 'flex',
-    height: 8,
-    borderRadius: theme.radii.full,
-    overflow: 'hidden',
-    marginBottom: '14px',
-  },
-  barSegment: {
-    height: '100%',
-    transition: 'width 0.3s',
-  },
-  legend: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '10px 18px',
-  },
-  legendItem: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '6px',
-    fontSize: theme.fontSizes.xs,
-    color: theme.colors.textSecondary,
-  },
-  legendDot: {
-    width: 8,
-    height: 8,
-    borderRadius: '50%',
-    flexShrink: 0,
-  },
-  legendCount: {
-    color: theme.colors.textMuted,
-  },
+  chartContainer: {
+    flex: 1,
+    position: 'relative',
+    width: '100%',
+  }
 }
 
 export default function LanguageChart({ repos }) {
-  const languages = useMemo(() => {
+  const { labels, data, colors } = useMemo(() => {
     const counts = {}
     repos.forEach((repo) => {
       if (repo.language) {
         counts[repo.language] = (counts[repo.language] || 0) + 1
       }
     })
-    const total = Object.values(counts).reduce((a, b) => a + b, 0)
-    if (total === 0) return []
-    return Object.entries(counts)
-      .map(([name, count]) => ({ name, count, pct: (count / total) * 100 }))
+    
+    const sorted = Object.entries(counts)
+      .map(([name, count]) => ({ name, count }))
       .sort((a, b) => b.count - a.count)
+      
+    return {
+      labels: sorted.map((l) => l.name),
+      data: sorted.map((l) => l.count),
+      colors: sorted.map((l) => LANG_COLORS[l.name] || '#6b7280'),
+    }
   }, [repos])
 
-  if (!languages.length) return null
+  if (!labels.length) return null
+
+  const chartData = {
+    labels,
+    datasets: [
+      {
+        label: 'Repositories',
+        data,
+        backgroundColor: colors,
+        borderRadius: 4,
+        barThickness: 20,
+      },
+    ],
+  }
+
+  const options = {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { 
+        enabled: true,
+        backgroundColor: '#000000', 
+        titleColor: '#FFFFFF',      
+        bodyColor: '#FFFFFF',       
+        borderColor: '#333333',     
+        borderWidth: 1 
+      },
+    },
+    scales: {
+      x: {
+        display: false,
+        grid: { display: false },
+      },
+      y: {
+        grid: { display: false },
+        ticks: { 
+          color: theme.colors.textSecondary,
+          font: { size: 12 }
+        },
+      },
+    },
+  }
 
   return (
     <div style={styles.card}>
       <h4 style={styles.title}>Languages</h4>
-      <div style={styles.bar}>
-        {languages.map((lang) => (
-          <div
-            key={lang.name}
-            style={{
-              ...styles.barSegment,
-              width: `${lang.pct}%`,
-              background: LANG_COLORS[lang.name] || '#6b7280',
-            }}
-          />
-        ))}
-      </div>
-      <div style={styles.legend}>
-        {languages.map((lang) => (
-          <div key={lang.name} style={styles.legendItem}>
-            <span style={{ ...styles.legendDot, background: LANG_COLORS[lang.name] || '#6b7280' }} />
-            {lang.name}
-            <span style={styles.legendCount}>({lang.count})</span>
-          </div>
-        ))}
+      <div style={styles.chartContainer}>
+        <Bar data={chartData} options={options} />
       </div>
     </div>
   )

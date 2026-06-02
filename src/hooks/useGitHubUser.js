@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback } from 'react'
 
 import { fetchUser, fetchRepos, searchRepos } from '../api/github'
 
@@ -34,45 +34,11 @@ export function useGitHubUser(devMode = false) {
 
   const [loadingMore, setLoadingMore] = useState(false)
 
-  const cache = useRef({})
-
-
-
   const search = useCallback(async (query, mode) => {
 
     if (!query.trim()) return
 
-    const trimmed = query.trim().toLowerCase()
-
     const isDev = devMode
-
-
-
-    const entry = cache.current[trimmed]
-
-    if (entry && entry.searchtype === mode) {
-
-      if (mode === 'user' && entry.user) {
-
-        setUser(entry.user)
-
-        if (entry.repos) setRepos(entry.repos)
-
-      } else if (mode === 'repo' && entry.repos) {
-
-        setRepos(entry.repos)
-
-      }
-
-      setError(null)
-
-      setPage(1)
-
-      setHasMore(false)
-
-      return
-
-    }
 
 
 
@@ -96,8 +62,6 @@ export function useGitHubUser(devMode = false) {
 
         const userData= await Promise.all([fetchUser(query.trim(),isDev),fetchRepos(query.trim(),mode,1, 30, isDev)])
 
-        cache.current[trimmed] = { searchtype: mode, user: userData[0], repos: userData[1] }
-
         setUser(userData[0]);setRepos(userData[1])
 
         setHasMore(false);
@@ -105,8 +69,6 @@ export function useGitHubUser(devMode = false) {
       } else {
 
         const reposData = await fetchRepos(query.trim(),mode, 1, 30, isDev)
-
-        cache.current[trimmed] = { searchtype: mode, repos: reposData }
 
         setRepos(reposData)
 
@@ -134,13 +96,11 @@ export function useGitHubUser(devMode = false) {
 
   const loadMore = useCallback(async (searchtype) => {
 
-    if (!user || !loadingMore || !hasMore) return
+    if (!user || loadingMore || !hasMore) return
 
     setLoadingMore(true)
 
     const nextPage = page + 1
-
-
 
     try {
 
