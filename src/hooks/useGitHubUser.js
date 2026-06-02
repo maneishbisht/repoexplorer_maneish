@@ -42,25 +42,25 @@ export function useGitHubUser(devMode = false) {
 
     if (!query.trim()) return
 
-    const key = `${mode}:${query.trim().toLowerCase()}`
+    const trimmed = query.trim().toLowerCase()
 
     const isDev = devMode
 
 
 
-    if (cache.current[key]) {
+    const entry = cache.current[trimmed]
 
-      const cached = cache.current[key]
+    if (entry && entry.searchtype === mode) {
 
-      if (mode === 'user' && cached.user) {
+      if (mode === 'user' && entry.user) {
 
-        setUser(cached.user)
+        setUser(entry.user)
 
-        if(cached.repos){setRepos(cached.repos)}
+        if (entry.repos) setRepos(entry.repos)
 
-      } else if (mode === 'repo'&& cached.repos) {
+      } else if (mode === 'repo' && entry.repos) {
 
-        setRepos(cached.repos)
+        setRepos(entry.repos)
 
       }
 
@@ -96,7 +96,7 @@ export function useGitHubUser(devMode = false) {
 
         const userData= await Promise.all([fetchUser(query.trim(),isDev),fetchRepos(query.trim(),mode,1, 30, isDev)])
 
-        cache.current[key] = {user: userData[0], repos: userData[1]}
+        cache.current[trimmed] = { searchtype: mode, user: userData[0], repos: userData[1] }
 
         setUser(userData[0]);setRepos(userData[1])
 
@@ -106,7 +106,7 @@ export function useGitHubUser(devMode = false) {
 
         const reposData = await fetchRepos(query.trim(),mode, 1, 30, isDev)
 
-        cache.current[key] = {repos: reposData}
+        cache.current[trimmed] = { searchtype: mode, repos: reposData }
 
         setRepos(reposData)
 

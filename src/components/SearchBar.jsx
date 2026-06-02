@@ -98,28 +98,6 @@ export default function SearchBar({ onSearch, searchTypeSetter }) {
 
     },
 
-    searchBtn: {
-
-      ...resetButton,
-
-      background: theme.colors.primary,
-
-      color: '#fff',
-
-      fontSize: theme.fontSizes.base,
-
-      fontWeight: 500,
-
-      padding: '10px 20px',
-
-      borderRadius: theme.radii.md,
-
-      whiteSpace: 'nowrap',
-
-      transition: 'background 0.15s',
-
-    },
-
     toggleBtn: {
 
       ...resetButton,
@@ -158,50 +136,29 @@ export default function SearchBar({ onSearch, searchTypeSetter }) {
 
 
 
-  function handleChange(e) {
-
-    textRef.current = e.target.value
-
+  function triggerSearch(type) {
+    if (!textRef.current.trim()) return
     if (timeoutIdRef.current) {
-
       clearTimeout(timeoutIdRef.current)
-
       timeoutIdRef.current = null
-
     }
-
-    if (textRef.current.trim() !== '') {
-
-      timeoutIdRef.current = setTimeout(() => {
-
-        onSearch(textRef.current.trim(), searchtype)
-
-      }, 2000)
-
-    }
-
+    onSearch(textRef.current.trim(), type ?? searchtype)
   }
 
-
+  function handleChange(e) {
+    textRef.current = e.target.value
+    if (timeoutIdRef.current) {
+      clearTimeout(timeoutIdRef.current)
+      timeoutIdRef.current = null
+    }
+    if (textRef.current.trim() !== '') {
+      timeoutIdRef.current = setTimeout(triggerSearch, 2000)
+    }
+  }
 
   function handleSubmit(e) {
-
     e.preventDefault()
-
-    if (timeoutIdRef.current) {
-
-      clearTimeout(timeoutIdRef.current)
-
-      timeoutIdRef.current = null
-
-    }
-
-    if (textRef.current.trim()) {
-
-      onSearch(textRef.current.trim(), searchtype)
-
-    }
-
+    triggerSearch()
   }
 
 
@@ -231,45 +188,18 @@ export default function SearchBar({ onSearch, searchTypeSetter }) {
       <div style={styles.buttonGroup}>
 
         <button
-
           type="button"
-
           style={{ ...styles.toggleBtn, ...(searchtype === 'user' ? styles.toggleBtnActive : {}) }}
-
-          onClick={() => { searchTypeSetter('user'); setSearchtype('user') }}
-
+          onClick={() => { searchTypeSetter('user'); setSearchtype('user'); triggerSearch('user') }}
         >
-
           User
-
         </button>
-
         <button
-
           type="button"
-
           style={{ ...styles.toggleBtn, ...(searchtype === 'repo' ? styles.toggleBtnActive : {}) }}
-
-          onClick={() => { searchTypeSetter('repo'); setSearchtype('repo') }}
-
+          onClick={() => { searchTypeSetter('repo'); setSearchtype('repo'); triggerSearch('repo') }}
         >
-
           Repo
-
-        </button>
-
-        <button
-
-          type="submit"
-
-          style={styles.searchBtn}
-
-          onClick={() => { onSearch(textRef.current, searchtype) }}
-
-        >
-
-          Search
-
         </button>
 
       </div>
