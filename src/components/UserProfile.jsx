@@ -40,6 +40,7 @@ const styles = {
   stats: {
     display: 'flex',
     gap: '24px',
+    flexWrap: 'wrap',
     marginTop: '16px',
   },
   stat: {
@@ -48,6 +49,7 @@ const styles = {
     gap: '6px',
     fontSize: theme.fontSizes.sm,
     color: theme.colors.textSecondary,
+    flexShrink: 0,
   },
   statValue: {
     fontWeight: 600,
@@ -58,8 +60,12 @@ const styles = {
 export default function UserProfile({ user }) {
   if (!user) return null
 
+  const profileOpenHandler = () => {
+
+  }
+
   return (
-    <div style={styles.card}>
+    <div style={styles.card} onClick = {profileOpenHandler}>
       <img
         src={user.avatar_url}
         alt={`${user.login}'s avatar`}

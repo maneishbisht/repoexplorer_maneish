@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { theme, card } from '../styles'
 
 function formatDate(dateStr) {
@@ -38,21 +37,7 @@ const styles = {
     textAlign: 'left',
     overflow: 'hidden',
     transition: 'box-shadow 0.15s',
-  },
-  header: {
-    padding: '16px 20px',
-    cursor: 'pointer',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    gap: '12px',
-    border: 'none',
-    background: 'none',
-    width: '100%',
-    boxSizing: 'border-box',
-    fontFamily: 'inherit',
-    textAlign: 'left',
-    color: 'inherit',
+    padding: '16px 20px', // Added padding to the card instead of the header button
   },
   headerLeft: {
     display: 'flex',
@@ -115,115 +100,40 @@ const styles = {
     alignItems: 'center',
     gap: '3px',
   },
-  expandIcon: {
-    fontSize: '16px',
-    color: theme.colors.textMuted,
-    flexShrink: 0,
-    marginTop: '4px',
-    transition: 'transform 0.15s',
-  },
-  expanded: {
-    padding: '0 20px 16px',
-    borderTop: `1px solid ${theme.colors.borderLight}`,
-  },
-  detailGrid: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '8px',
-    paddingTop: '14px',
-  },
-  detailItem: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '2px',
-  },
-  detailLabel: {
-    fontSize: theme.fontSizes.xs,
-    color: theme.colors.textMuted,
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px',
-  },
-  detailValue: {
-    fontSize: theme.fontSizes.sm,
-    color: theme.colors.text,
-    fontWeight: 500,
-  },
 }
 
 export default function RepoCard({ repo, showOwner }) {
-  const [expanded, setExpanded] = useState(false)
-
   return (
     <div style={styles.card}>
-      <button
-        style={styles.header}
-        onClick={() => setExpanded((p) => !p)}
-        aria-expanded={expanded}
-      >
-        <div style={styles.headerLeft}>
-          {showOwner && repo.owner?.avatar_url && (
-            <img
-              src={repo.owner.avatar_url}
-              alt="owner avatar"
-              style={styles.ownerAvatar}
-            />
+      <div style={styles.headerLeft}>
+        {showOwner && repo.owner?.avatar_url && (
+          <img
+            src={repo.owner.avatar_url}
+            alt="owner avatar"
+            style={styles.ownerAvatar}
+          />
+        )}
+        <div style={styles.headerContent}>
+          <h3 style={styles.repoName}>{repo.name}</h3>
+          {repo.description && (
+            <p style={styles.description}>{repo.description}</p>
           )}
-          <div style={styles.headerContent}>
-            <h3 style={styles.repoName}>{repo.name}</h3>
-            {repo.description && (
-              <p style={styles.description}>{repo.description}</p>
+          <div style={styles.meta}>
+            {repo.language && (
+              <span style={styles.metaItem}>
+                <span style={{ ...styles.langDot, background: languageColor(repo.language) }} />
+                {repo.language}
+              </span>
             )}
-            <div style={styles.meta}>
-              {repo.language && (
-                <span style={styles.metaItem}>
-                  <span style={{ ...styles.langDot, background: languageColor(repo.language) }} />
-                  {repo.language}
-                </span>
-              )}
-              <span style={styles.metaItem}>
-                <span style={styles.starCount}>&#9733; {repo.stargazers_count}</span>
-              </span>
-              <span style={styles.metaItem}>
-                Updated {formatDate(repo.updated_at)}
-              </span>
-            </div>
+            <span style={styles.metaItem}>
+              <span style={styles.starCount}>&#9733; {repo.stargazers_count}</span>
+            </span>
+            <span style={styles.metaItem}>
+              Updated {formatDate(repo.updated_at)}
+            </span>
           </div>
         </div>
-        <span style={{ ...styles.expandIcon, transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)' }}>
-          &#9660;
-        </span>
-      </button>
-
-      {expanded && (
-        <div style={styles.expanded}>
-          <div style={styles.detailGrid}>
-            <div style={styles.detailItem}>
-              <span style={styles.detailLabel}>Default Branch</span>
-              <span style={styles.detailValue}>{repo.default_branch}</span>
-            </div>
-            <div style={styles.detailItem}>
-              <span style={styles.detailLabel}>Open Issues</span>
-              <span style={styles.detailValue}>{repo.open_issues_count}</span>
-            </div>
-            <div style={styles.detailItem}>
-              <span style={styles.detailLabel}>Forks</span>
-              <span style={styles.detailValue}>{repo.forks_count}</span>
-            </div>
-            <div style={styles.detailItem}>
-              <span style={styles.detailLabel}>License</span>
-              <span style={styles.detailValue}>{repo.license?.spdx_id || 'N/A'}</span>
-            </div>
-            <div style={styles.detailItem}>
-              <span style={styles.detailLabel}>Watchers</span>
-              <span style={styles.detailValue}>{repo.watchers_count}</span>
-            </div>
-            <div style={styles.detailItem}>
-              <span style={styles.detailLabel}>Created</span>
-              <span style={styles.detailValue}>{formatDate(repo.created_at)}</span>
-            </div>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   )
 }

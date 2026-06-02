@@ -1,5 +1,6 @@
 export const theme = {
   colors: {
+    display : 'flex',
     primary: '#6366f1',
     primaryHover: '#4f46e5',
     primaryLight: '#eef2ff',
@@ -62,6 +63,7 @@ export const inputBase = {
 export const card = {
   background: theme.colors.bgCard,
   border: `1px solid ${theme.colors.border}`,
+  display : 'flex',
   borderRadius: theme.radii.lg,
   boxShadow: theme.colors.shadow,
 }
