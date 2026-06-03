@@ -4,7 +4,7 @@ import { theme, resetButton } from '../styles'
 
 
 
-export default function SearchBar({ onSearch, searchType,setSearchType,query}) {
+export default function SearchBar({ onSearch, searchType,setSearchType,setRecent,query}) {
 
   const [isSmallScreen, setIsSmallScreen] = useState(false)
 
@@ -30,7 +30,7 @@ export default function SearchBar({ onSearch, searchType,setSearchType,query}) {
 
   }, [])
 
-  useEffect(()=>{onSearch();},[searchType])
+  useEffect(()=>{onSearch(querytext?.current);},[searchType])
 
 
   const styles = {
@@ -127,6 +127,8 @@ export default function SearchBar({ onSearch, searchType,setSearchType,query}) {
 
   }
 
+  const querytext = useRef('');
+
   const onClickHandler = (type) => {
         setSearchType((prev)=>{
         return type
@@ -134,23 +136,27 @@ export default function SearchBar({ onSearch, searchType,setSearchType,query}) {
    
     }
 
-  function triggerSearch() {
-    if (!query?.current?.trim()) return
+  async function triggerSearch(querytext) {
+    if (!querytext?.trim()) return
     if (timeoutIdRef.current) {
       clearTimeout(timeoutIdRef.current)
       timeoutIdRef.current = null
     }
-    onSearch()
+    await onSearch(querytext);
+    setRecent((prev)=>{
+      if(prev.length===10){return [querytext,...prev.slice(0,10)]}
+      else{return[querytext,...prev]}
+    })
   }
 
   function handleChange(e) {
-    query.current = e.target.value
+    querytext.current = e.target.value
     if (timeoutIdRef.current) {
       clearTimeout(timeoutIdRef.current)
       timeoutIdRef.current = null
     }
-    if (query.current.trim() !== '') {
-      timeoutIdRef.current = setTimeout(triggerSearch, 2000)
+    if (querytext.current.trim() !== '') {
+      timeoutIdRef.current = setTimeout(()=>{triggerSearch(querytext.current)}, 2000)
     }
   }
 

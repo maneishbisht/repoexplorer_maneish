@@ -47,20 +47,20 @@ const styles = {
   },
 }
 
-export default function RecentSearches({ searches, onSelect, onClear }) {
+export default function RecentSearches({query,searches, onSelect, onClear }) {
   if (!searches.length) return null
 
   return (
     <div style={styles.container}>
       <span style={styles.label}>Recent</span>
       <div style={styles.list}>
-        {searches.map((username) => (
+        {searches.map((text) => (
           <button
-            key={username}
+            key={text}
             style={styles.chip}
-            onClick={() => onSelect(username)}
+            onClick={() => {console.log("clicked"); query.current = text;onSelect(text)}}
           >
-            {username}
+            {text}
           </button>
         ))}
       </div>

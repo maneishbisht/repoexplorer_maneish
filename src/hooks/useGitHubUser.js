@@ -2,8 +2,6 @@ import { useState, useCallback,useRef } from 'react'
 
 import { fetchUser, fetchRepos, fetchReposbyUser} from '../api/github'
 
-
-
 const SORT_FNS = {
 
   stars: (a, b) => b.stargazers_count - a.stargazers_count,
@@ -18,9 +16,9 @@ const SORT_FNS = {
 
 export function useGitHubUser(devMode = false) {
 
-  const query = useRef('')
 
   const [searchType,setSearchType] = useState('user')
+
 
   const [user,setUser] = useState(null)
 
@@ -41,9 +39,9 @@ export function useGitHubUser(devMode = false) {
 
 
 
-  const search = useCallback(async () => {
+  const search = useCallback(async (queryText) => {
 
-    if (!query?.current?.trim()) return
+    if (!queryText.trim()) return
 
     const isDev = devMode
 
@@ -69,17 +67,18 @@ export function useGitHubUser(devMode = false) {
 
       if (searchType === 'user') {
 
-        const userData= await Promise.all([fetchUser(query.current.trim(),isDev),fetchReposbyUser(query.current.trim(),1, 10, isDev)])
+        const userData= await Promise.all([fetchUser(queryText.trim(),isDev),fetchReposbyUser(queryText.trim(),1, 10, isDev)])
 
         setUser(userData[0]);setRepos(userData[1])
 
+        
         if(userData[1].length === 10){
           setHasMore(true)
         }
 
       } else {
 
-        const reposData = await fetchRepos(query.current.trim(), 1, 10, isDev)
+        const reposData = await fetchRepos(queryText.trim(), 1, 10, isDev)
         setRepos(reposData)
 
         if(reposData.length === 10){
@@ -97,7 +96,8 @@ export function useGitHubUser(devMode = false) {
       setRepos([])
 
     } finally {
-
+      
+      
       setLoading(false)
 
     }
@@ -109,7 +109,7 @@ export function useGitHubUser(devMode = false) {
   const loadMore = async () => {
 
     if((searchType === 'user')&&(!user)){return}
-    if (!query?.current || loadingMore || !hasMore){return}
+    if (!queryText || loadingMore || !hasMore){return}
 
     setLoadingMore(true)
 
@@ -119,7 +119,7 @@ export function useGitHubUser(devMode = false) {
 
       let reposData;
       if(searchType === "user"){reposData = await fetchReposbyUser(user.login, nextPage, 10, devMode)}
-      else{reposData = await fetchRepos(query.current.trim(), nextPage, 10, devMode)}
+      else{reposData = await fetchRepos(queryText.trim(), nextPage, 10, devMode)}
 
       setRepos((prev) => [...prev, ...reposData])
 
@@ -148,6 +148,6 @@ export function useGitHubUser(devMode = false) {
 
 
 
-  return {repos: sortedRepos,setRepos,loading,error,sortBy,setSortBy,loadMore,hasMore,loadingMore,search,query,searchType,setSearchType,user,setUser,clearError}
+  return {repos: sortedRepos,setRepos,loading,error,sortBy,setSortBy,loadMore,hasMore,loadingMore,search,searchType,setSearchType,user,setUser,clearError}
 
 }

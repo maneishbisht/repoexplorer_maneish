@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import {useEffect, useState } from 'react'
 
 import { useGitHubUser } from './hooks/useGitHubUser'
 
@@ -18,39 +18,8 @@ import ErrorMessage from './components/ErrorMessage'
 
 import LoadingSpinner from './components/LoadingSpinner'
 
+import { loadRecent, saveRecent } from '../helpers/recent'
 
-
-const STORAGE_KEY = 'repoexplorer_recent'
-
-
-
-function loadRecent() {
-
-  try {
-
-    const raw = localStorage.getItem(STORAGE_KEY)
-
-    return raw ? JSON.parse(raw) : []
-
-  } catch {
-
-    return []
-
-  }
-
-}
-
-
-
-function saveRecent(searches) {
-
-  try {
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(searches.slice(0, 10)))
-
-  } catch { /* ignore */ }
-
-}
 
 
 
@@ -114,24 +83,19 @@ export default function App() {
 
     repos,loading, error, sortBy, setSortBy,
 
-    loadMore, hasMore, loadingMore, search, query,searchType,setSearchType,user,setUser,clearError
+    loadMore, hasMore, loadingMore, search,searchType,setSearchType,user,clearError
 
   } = useGitHubUser(true)
 
 
 
-  const [recent, setRecent] = useState(loadRecent)
-
-
+  const [recent, setRecent] = useState(loadRecent())
 
   useEffect(() => {
 
     saveRecent(recent)
 
   }, [recent])
-
-
-
 
 
   return (
@@ -148,21 +112,22 @@ export default function App() {
 
 
 
-      <SearchBar onSearch = {search} searchType = {searchType} setSearchType = {setSearchType} query = {query}/>
+      <SearchBar onSearch = {search} searchType = {searchType} setSearchType = {setSearchType} setRecent = {setRecent}/>
 
-      <RecentSearches
-
-        searches={recent}
-
-        onSelect={(val) => {
-
-          const [mode, ...rest] = val.split(':')
-
-        }}
-
-        onClear={() => setRecent([])}
-
-      />
+      {
+        (recent)&&(
+          
+          <RecentSearches
+          
+          searches={recent}
+          
+          onSelect = {search}
+          
+          onClear={() => setRecent([])}
+          
+          />
+        )
+      }
 
 
 
@@ -211,10 +176,6 @@ export default function App() {
             loadingMore={loadingMore}
 
             showOwner={searchType === 'repo'}
-
-            query = {query}
-
-            searchType = {searchType}
 
           />
 
