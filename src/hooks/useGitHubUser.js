@@ -2,15 +2,7 @@ import { useState, useCallback,useRef } from 'react'
 
 import { fetchUser, fetchRepos, fetchReposbyUser} from '../api/github'
 
-const SORT_FNS = {
-
-  stars: (a, b) => b.stargazers_count - a.stargazers_count,
-
-  name: (a, b) => a.name?.localeCompare(b.name) ?? 0,
-
-  updated: (a, b) => new Date(b.updated_at) - new Date(a.updated_at),
-
-}
+import { SORT_FNS } from '../../helpers/recent'
 
 
 
@@ -40,8 +32,11 @@ export function useGitHubUser(devMode = false) {
 
 
   const search = useCallback(async (queryText) => {
-
+    
+    console.log('hello1')
     if (!queryText.trim()) return
+
+    console.log('hello2')
 
     const isDev = devMode
 
@@ -59,33 +54,31 @@ export function useGitHubUser(devMode = false) {
 
     setPage(1)
 
-    setHasMore(true)
+    setHasMore(false)
 
 
 
     try {
 
-      if (searchType === 'user') {
-
+      if (searchType === 'user') 
+        {
         const userData= await Promise.all([fetchUser(queryText.trim(),isDev),fetchReposbyUser(queryText.trim(),1, 10, isDev)])
-
-        setUser(userData[0]);setRepos(userData[1])
-
-        
+        if(!userData[0]){setUser(null);setRepos([]);return}
+        setUser(userData[0]);
+        if(!userData[1]){setRepos([]);return}
+        setRepos(userData[1].sort(SORT_FNS[sortBy] || SORT_FNS.stars))
         if(userData[1].length === 10){
-          setHasMore(true)
+        setHasMore(true)
         }
-
-      } else {
-
+      } 
+      else
+      {
         const reposData = await fetchRepos(queryText.trim(), 1, 10, isDev)
-        setRepos(reposData)
-
+        setRepos([...reposData].sort(SORT_FNS[sortBy] || SORT_FNS.stars))
         if(reposData.length === 10){
           setHasMore(true)
         }
       }
-
 
     } catch (err) {
 
@@ -106,7 +99,7 @@ export function useGitHubUser(devMode = false) {
 
 
 
-  const loadMore = async () => {
+  const loadMore = async (queryText) => {
 
     if((searchType === 'user')&&(!user)){return}
     if (!queryText || loadingMore || !hasMore){return}
@@ -117,24 +110,25 @@ export function useGitHubUser(devMode = false) {
 
     try {
 
-      let reposData;
-      if(searchType === "user"){reposData = await fetchReposbyUser(user.login, nextPage, 10, devMode)}
-      else{reposData = await fetchRepos(queryText.trim(), nextPage, 10, devMode)}
-
-      setRepos((prev) => [...prev, ...reposData])
-
-      setPage(nextPage)
-
-      setHasMore(reposData.length==10)
+      if(searchType === "user")
+      {
+        const reposData = await fetchReposbyUser(user.login, nextPage, 10, devMode)
+        setRepos((prev) => [...prev, ...reposData].sort(SORT_FNS[sortBy] || SORT_FNS.stars))
+        setPage(nextPage)
+        setHasMore(reposData.length==10)
+      }
+      else
+      {
+        const reposData = await fetchRepos(queryText.trim(), nextPage, 10, devMode)
+        setRepos((prev) => [...prev, ...reposData].sort(SORT_FNS[sortBy] || SORT_FNS.stars))
+        setPage(nextPage)
+        setHasMore(reposData.length==10)
+      }
 
     } catch (err) {
-
       setError(err)
-
     } finally {
-
       setLoadingMore(false)
-
     }
 
   }
@@ -144,10 +138,9 @@ export function useGitHubUser(devMode = false) {
   const clearError = useCallback(() => setError(null), [])
 
 
-  const sortedRepos = [...repos].sort(SORT_FNS[sortBy] || SORT_FNS.stars)
+  //const sortedRepos = [...repos].sort(SORT_FNS[sortBy] || SORT_FNS.stars)
 
 
-
-  return {repos: sortedRepos,setRepos,loading,error,sortBy,setSortBy,loadMore,hasMore,loadingMore,search,searchType,setSearchType,user,setUser,clearError}
+  return {repos,setRepos,loading,error,sortBy,setSortBy,loadMore,hasMore,loadingMore,search,searchType,setSearchType,user,setUser,clearError}
 
 }

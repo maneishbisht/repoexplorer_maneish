@@ -130,7 +130,7 @@ export const dummyRepos = [
     created_at: '2024-05-30T16:00:00Z',
   },
   {
-    id: 1,
+    id: 10,
     name: 'javascript-algorithms',
     owner: { avatar_url: 'https://i.pravatar.cc/200?img=1' },
     description: 'Classic algorithms and data structures implemented in JavaScript with detailed explanations.',
@@ -145,7 +145,7 @@ export const dummyRepos = [
     created_at: '2022-03-15T10:00:00Z',
   },
   {
-    id: 2,
+    id: 11,
     name: 'react-component-library',
     owner: { avatar_url: 'https://i.pravatar.cc/200?img=2' },
     description: 'A collection of reusable, accessible React UI components with zero dependencies.',
@@ -160,7 +160,7 @@ export const dummyRepos = [
     created_at: '2023-06-01T08:00:00Z',
   },
   {
-    id: 3,
+    id: 13,
     name: 'go-microservices',
     owner: { avatar_url: 'https://i.pravatar.cc/200?img=3' },
     description: 'Production-ready microservices template in Go with gRPC, tracing, and Docker Compose.',
@@ -175,7 +175,7 @@ export const dummyRepos = [
     created_at: '2023-09-10T12:00:00Z',
   },
   {
-    id: 4,
+    id: 14,
     name: 'python-ml-toolkit',
     owner: { avatar_url: 'https://i.pravatar.cc/200?img=4' },
     description: 'Machine learning utilities for data preprocessing, feature engineering, and model evaluation.',
@@ -190,7 +190,7 @@ export const dummyRepos = [
     created_at: '2023-11-22T14:00:00Z',
   },
   {
-    id: 5,
+    id: 15,
     name: 'rust-cli-tools',
     owner: { avatar_url: 'https://i.pravatar.cc/200?img=5' },
     description: 'Fast and ergonomic CLI utilities built with Rust, focusing on developer productivity.',
@@ -205,7 +205,7 @@ export const dummyRepos = [
     created_at: '2024-01-05T09:00:00Z',
   },
   {
-    id: 6,
+    id: 16,
     name: 'dotfiles',
     owner: { avatar_url: 'https://i.pravatar.cc/200?img=6' },
     description: null,
@@ -220,7 +220,7 @@ export const dummyRepos = [
     created_at: '2022-08-12T07:00:00Z',
   },
   {
-    id: 7,
+    id: 17,
     name: 'rails-api-boilerplate',
     owner: { avatar_url: 'https://i.pravatar.cc/200?img=7' },
     description: 'A modern Rails API starter with JWT auth, serializers, and RSpec test suite.',
@@ -235,7 +235,7 @@ export const dummyRepos = [
     created_at: '2024-02-18T11:00:00Z',
   },
   {
-    id: 8,
+    id: 18,
     name: 'learning-cpp',
     owner: { avatar_url: 'https://i.pravatar.cc/200?img=8' },
     description: 'My journey learning C++ — examples, exercises, and mini-projects.',
@@ -250,7 +250,7 @@ export const dummyRepos = [
     created_at: '2024-05-30T16:00:00Z',
   },
   {
-    id: 1,
+    id: 19,
     name: 'javascript-algorithms',
     owner: { avatar_url: 'https://i.pravatar.cc/200?img=1' },
     description: 'Classic algorithms and data structures implemented in JavaScript with detailed explanations.',
@@ -265,7 +265,7 @@ export const dummyRepos = [
     created_at: '2022-03-15T10:00:00Z',
   },
   {
-    id: 2,
+    id: 20,
     name: 'react-component-library',
     owner: { avatar_url: 'https://i.pravatar.cc/200?img=2' },
     description: 'A collection of reusable, accessible React UI components with zero dependencies.',
@@ -280,7 +280,7 @@ export const dummyRepos = [
     created_at: '2023-06-01T08:00:00Z',
   },
   {
-    id: 3,
+    id: 23,
     name: 'go-microservices',
     owner: { avatar_url: 'https://i.pravatar.cc/200?img=3' },
     description: 'Production-ready microservices template in Go with gRPC, tracing, and Docker Compose.',
@@ -295,7 +295,7 @@ export const dummyRepos = [
     created_at: '2023-09-10T12:00:00Z',
   },
   {
-    id: 4,
+    id: 24,
     name: 'python-ml-toolkit',
     owner: { avatar_url: 'https://i.pravatar.cc/200?img=4' },
     description: 'Machine learning utilities for data preprocessing, feature engineering, and model evaluation.',
@@ -310,7 +310,7 @@ export const dummyRepos = [
     created_at: '2023-11-22T14:00:00Z',
   },
   {
-    id: 5,
+    id: 25,
     name: 'rust-cli-tools',
     owner: { avatar_url: 'https://i.pravatar.cc/200?img=5' },
     description: 'Fast and ergonomic CLI utilities built with Rust, focusing on developer productivity.',
@@ -325,7 +325,7 @@ export const dummyRepos = [
     created_at: '2024-01-05T09:00:00Z',
   },
   {
-    id: 6,
+    id: 26,
     name: 'dotfiles',
     owner: { avatar_url: 'https://i.pravatar.cc/200?img=6' },
     description: null,
@@ -340,7 +340,7 @@ export const dummyRepos = [
     created_at: '2022-08-12T07:00:00Z',
   },
   {
-    id: 7,
+    id: 27,
     name: 'rails-api-boilerplate',
     owner: { avatar_url: 'https://i.pravatar.cc/200?img=7' },
     description: 'A modern Rails API starter with JWT auth, serializers, and RSpec test suite.',
@@ -355,7 +355,7 @@ export const dummyRepos = [
     created_at: '2024-02-18T11:00:00Z',
   },
   {
-    id: 8,
+    id: 28,
     name: 'learning-cpp',
     owner: { avatar_url: 'https://i.pravatar.cc/200?img=8' },
     description: 'My journey learning C++ — examples, exercises, and mini-projects.',
@@ -370,7 +370,7 @@ export const dummyRepos = [
     created_at: '2024-05-30T16:00:00Z',
   },
   {
-    id: 1,
+    id: 31,
     name: 'javascript-algorithms',
     owner: { avatar_url: 'https://i.pravatar.cc/200?img=1' },
     description: 'Classic algorithms and data structures implemented in JavaScript with detailed explanations.',
@@ -385,7 +385,7 @@ export const dummyRepos = [
     created_at: '2022-03-15T10:00:00Z',
   },
   {
-    id: 2,
+    id: 32,
     name: 'react-component-library',
     owner: { avatar_url: 'https://i.pravatar.cc/200?img=2' },
     description: 'A collection of reusable, accessible React UI components with zero dependencies.',
@@ -400,7 +400,7 @@ export const dummyRepos = [
     created_at: '2023-06-01T08:00:00Z',
   },
   {
-    id: 3,
+    id: 33,
     name: 'go-microservices',
     owner: { avatar_url: 'https://i.pravatar.cc/200?img=3' },
     description: 'Production-ready microservices template in Go with gRPC, tracing, and Docker Compose.',
@@ -415,7 +415,7 @@ export const dummyRepos = [
     created_at: '2023-09-10T12:00:00Z',
   },
   {
-    id: 4,
+    id: 34,
     name: 'python-ml-toolkit',
     owner: { avatar_url: 'https://i.pravatar.cc/200?img=4' },
     description: 'Machine learning utilities for data preprocessing, feature engineering, and model evaluation.',
@@ -430,7 +430,7 @@ export const dummyRepos = [
     created_at: '2023-11-22T14:00:00Z',
   },
   {
-    id: 5,
+    id: 35,
     name: 'rust-cli-tools',
     owner: { avatar_url: 'https://i.pravatar.cc/200?img=5' },
     description: 'Fast and ergonomic CLI utilities built with Rust, focusing on developer productivity.',
@@ -445,7 +445,7 @@ export const dummyRepos = [
     created_at: '2024-01-05T09:00:00Z',
   },
   {
-    id: 6,
+    id: 36,
     name: 'dotfiles',
     owner: { avatar_url: 'https://i.pravatar.cc/200?img=6' },
     description: null,
@@ -460,7 +460,7 @@ export const dummyRepos = [
     created_at: '2022-08-12T07:00:00Z',
   },
   {
-    id: 7,
+    id: 37,
     name: 'rails-api-boilerplate',
     owner: { avatar_url: 'https://i.pravatar.cc/200?img=7' },
     description: 'A modern Rails API starter with JWT auth, serializers, and RSpec test suite.',
@@ -475,7 +475,7 @@ export const dummyRepos = [
     created_at: '2024-02-18T11:00:00Z',
   },
   {
-    id: 8,
+    id: 38,
     name: 'learning-cpp',
     owner: { avatar_url: 'https://i.pravatar.cc/200?img=8' },
     description: 'My journey learning C++ — examples, exercises, and mini-projects.',

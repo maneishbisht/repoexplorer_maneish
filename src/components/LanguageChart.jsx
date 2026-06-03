@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { memo,useMemo } from 'react'
 import { Bar } from 'react-chartjs-2'
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from 'chart.js'
 import { theme, card } from '../styles'
@@ -48,7 +48,7 @@ const styles = {
   }
 }
 
-export default function LanguageChart({ repos }) {
+const LanguageChart = ({ repos })=> {
   const { labels, data, colors } = useMemo(() => {
     const counts = {}
     repos.forEach((repo) => {
@@ -122,3 +122,5 @@ export default function LanguageChart({ repos }) {
     </div>
   )
 }
+
+export default memo(LanguageChart)

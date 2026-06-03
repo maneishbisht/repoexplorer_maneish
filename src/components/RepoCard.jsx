@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState,memo} from 'react'
 import { theme, card, resetButton } from '../styles'
 
 function formatDate(dateStr) {
@@ -144,7 +144,7 @@ const styles = {
   },
 }
 
-export default function RepoCard({ repo, showOwner }) {
+const RepoCard = ({ repo, showOwner }) =>{
   const [expanded, setExpanded] = useState(false)
 
   return (
@@ -230,3 +230,5 @@ export default function RepoCard({ repo, showOwner }) {
     </div>
   )
 }
+
+export default memo(RepoCard)

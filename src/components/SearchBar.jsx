@@ -1,15 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
+import { memo } from 'react'
 
 import { theme, resetButton } from '../styles'
 
 
 
-export default function SearchBar({ onSearch, searchType,setSearchType,setRecent,query}) {
+const SearchBar= ({ onSearch, searchType,setSearchType,setRecent,inputVal,setInputVal}) =>{
 
   const [isSmallScreen, setIsSmallScreen] = useState(false)
 
   const timeoutIdRef = useRef(null)
+  const querytext = useRef(inputVal);
+  const inputRef = useRef(null);
 
+  useEffect(()=>{inputRef.current.value = inputVal;querytext.current = inputVal;triggerSearch(querytext.current)},[inputVal])
 
 
   useEffect(() => {
@@ -127,7 +131,6 @@ export default function SearchBar({ onSearch, searchType,setSearchType,setRecent
 
   }
 
-  const querytext = useRef('');
 
   const onClickHandler = (type) => {
         setSearchType((prev)=>{
@@ -137,26 +140,37 @@ export default function SearchBar({ onSearch, searchType,setSearchType,setRecent
     }
 
   async function triggerSearch(querytext) {
-    if (!querytext?.trim()) return
-    if (timeoutIdRef.current) {
+    if(!querytext?.trim()) return
+    if(timeoutIdRef.current) {
       clearTimeout(timeoutIdRef.current)
       timeoutIdRef.current = null
     }
     await onSearch(querytext);
-    setRecent((prev)=>{
-      if(prev.length===10){return [querytext,...prev.slice(0,10)]}
-      else{return[querytext,...prev]}
-    })
   }
 
-  function handleChange(e) {
+
+
+  async function handleChange(e) {
+  
     querytext.current = e.target.value
     if (timeoutIdRef.current) {
       clearTimeout(timeoutIdRef.current)
       timeoutIdRef.current = null
     }
+   
+
     if (querytext.current.trim() !== '') {
-      timeoutIdRef.current = setTimeout(()=>{triggerSearch(querytext.current)}, 2000)
+
+        timeoutIdRef.current = setTimeout(async()=>{
+
+        //await triggerSearch(querytext.current);
+        setInputVal(querytext.current);
+        setRecent((prev)=>{
+        if(prev.length===10){return [querytext.current,...prev.slice(0,10)]}
+        else{return[querytext.current,...prev]}
+
+      })}, 2000)
+
     }
   }
 
@@ -168,6 +182,8 @@ export default function SearchBar({ onSearch, searchType,setSearchType,setRecent
       <input
 
         type="text"
+ 
+        ref = {inputRef}
 
         placeholder={searchType === 'user' ? 'Enter GitHub username...' : 'Search repositories...'}
 
@@ -208,3 +224,4 @@ export default function SearchBar({ onSearch, searchType,setSearchType,setRecent
   )
 
 }
+export default memo(SearchBar)

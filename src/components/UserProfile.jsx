@@ -1,4 +1,5 @@
 import { theme, card } from '../styles'
+import { memo } from 'react'
 
 const styles = {
   card: {
@@ -57,7 +58,7 @@ const styles = {
   },
 }
 
-export default function UserProfile({ user }) {
+const UserProfile = ({ user })=>{
   if (!user) return null
 
   return (
@@ -86,3 +87,4 @@ export default function UserProfile({ user }) {
     </div>
   )
 }
+export default memo(UserProfile)

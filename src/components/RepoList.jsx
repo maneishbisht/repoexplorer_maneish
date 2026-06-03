@@ -1,5 +1,7 @@
 import { theme, resetButton, card } from '../styles'
+import { memo } from 'react'
 import RepoCard from './RepoCard'
+import { SORT_FNS } from '../../helpers/recent'
 
 const styles = {
   section: {
@@ -78,7 +80,7 @@ const SORT_OPTIONS = [
 ]
 
 
-export default function RepoList({ repos, sortBy, onSortChange, onLoadMore, hasMore, loadingMore, showOwner }) {
+const RepoList= ({ repos, sortBy, onSortChange, onLoadMore, hasMore, loadingMore, showOwner,inputVal })=> {
   if (!repos.length) return null
 
   return (
@@ -91,7 +93,7 @@ export default function RepoList({ repos, sortBy, onSortChange, onLoadMore, hasM
             <button
               key={opt.key}
               style={{ ...styles.sortBtn, ...(sortBy === opt.key ? styles.sortBtnActive : {}) }}
-              onClick={() => onSortChange(opt.key)}
+              onClick={() => {onSortChange(opt.key)}}
             >
               {opt.label}
             </button>
@@ -99,7 +101,7 @@ export default function RepoList({ repos, sortBy, onSortChange, onLoadMore, hasM
         </div>
       </div>
       <div style={styles.list}>
-        {repos.map((repo) => (
+        {repos.sort(SORT_FNS[sortBy]).map((repo) => (
           <RepoCard key={repo.id} repo={repo} showOwner={showOwner} />
         ))}
       </div>
@@ -107,7 +109,7 @@ export default function RepoList({ repos, sortBy, onSortChange, onLoadMore, hasM
         <div style={styles.loadMoreWrapper}>
           <button
             style={styles.loadMoreBtn}
-            onClick={onLoadMore}
+            onClick={()=>{onLoadMore(inputVal);}}
             disabled={loadingMore}
           >
             {loadingMore ? 'Loading...' : 'Load More'}
@@ -117,3 +119,4 @@ export default function RepoList({ repos, sortBy, onSortChange, onLoadMore, hasM
     </div>
   )
 }
+export default memo(RepoList)

@@ -87,7 +87,7 @@ export default function App() {
 
   } = useGitHubUser(true)
 
-
+  const [inputVal,setInputVal] = useState('')
 
   const [recent, setRecent] = useState(loadRecent())
 
@@ -112,7 +112,7 @@ export default function App() {
 
 
 
-      <SearchBar onSearch = {search} searchType = {searchType} setSearchType = {setSearchType} setRecent = {setRecent}/>
+      <SearchBar onSearch = {search} searchType = {searchType} setSearchType = {setSearchType} setRecent = {setRecent} inputVal = {inputVal} setInputVal = {setInputVal}/>
 
       {
         (recent)&&(
@@ -120,10 +120,10 @@ export default function App() {
           <RecentSearches
           
           searches={recent}
-          
-          onSelect = {search}
-          
+                  
           onClear={() => setRecent([])}
+
+          setInputVal = {setInputVal}
           
           />
         )
@@ -176,6 +176,8 @@ export default function App() {
             loadingMore={loadingMore}
 
             showOwner={searchType === 'repo'}
+
+            inputVal = {inputVal}
 
           />
 

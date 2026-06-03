@@ -1,4 +1,6 @@
 import { theme, resetButton, card } from '../styles'
+import { memo } from 'react'
+
 
 const styles = {
   container: {
@@ -47,7 +49,7 @@ const styles = {
   },
 }
 
-export default function RecentSearches({searches, onSelect, onClear }) {
+const  RecentSearches = ({searches, onClear,setInputVal})=>{
   if (!searches.length) return null
 
   return (
@@ -58,7 +60,7 @@ export default function RecentSearches({searches, onSelect, onClear }) {
           <button
             key={text}
             style={styles.chip}
-            onClick={() => {console.log("clicked");onSelect(text)}}
+            onClick={() => {setInputVal(text);}}
           >
             {text}
           </button>
@@ -70,3 +72,4 @@ export default function RecentSearches({searches, onSelect, onClear }) {
     </div>
   )
 }
+export default memo(RecentSearches)

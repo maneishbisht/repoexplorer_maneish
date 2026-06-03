@@ -1,4 +1,5 @@
 import { theme, resetButton } from '../styles'
+import { memo } from 'react'
 
 const styles = {
   container: {
@@ -41,7 +42,7 @@ const styles = {
   },
 }
 
-export default function ErrorMessage({ error, onDismiss }) {
+const  ErrorMessage = ({ error, onDismiss })=>{
   const title = error?.code === 'NOT_FOUND'
     ? 'User not found'
     : error?.code === 'RATE_LIMITED'
@@ -69,3 +70,4 @@ export default function ErrorMessage({ error, onDismiss }) {
     </div>
   )
 }
+export default memo(ErrorMessage)
