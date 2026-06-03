@@ -47,7 +47,7 @@ const styles = {
   },
 }
 
-export default function RecentSearches({query,searches, onSelect, onClear }) {
+export default function RecentSearches({searches, onSelect, onClear }) {
   if (!searches.length) return null
 
   return (
@@ -58,7 +58,7 @@ export default function RecentSearches({query,searches, onSelect, onClear }) {
           <button
             key={text}
             style={styles.chip}
-            onClick={() => {console.log("clicked"); query.current = text;onSelect(text)}}
+            onClick={() => {console.log("clicked");onSelect(text)}}
           >
             {text}
           </button>
