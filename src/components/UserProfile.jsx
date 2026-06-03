@@ -60,12 +60,8 @@ const styles = {
 export default function UserProfile({ user }) {
   if (!user) return null
 
-  const profileOpenHandler = () => {
-
-  }
-
   return (
-    <div style={styles.card} onClick = {profileOpenHandler}>
+    <div style={styles.card}>
       <img
         src={user.avatar_url}
         alt={`${user.login}'s avatar`}

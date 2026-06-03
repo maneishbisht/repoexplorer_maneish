@@ -112,15 +112,13 @@ export default function App() {
 
   const {
 
-    user,repos,loading, error, sortBy, setSortBy,
+    repos,loading, error, sortBy, setSortBy,
 
-    loadMore, hasMore, loadingMore, search, clearError,
+    loadMore, hasMore, loadingMore, search, query,searchType,setSearchType,user,setUser,clearError
 
   } = useGitHubUser(true)
 
 
-
-  const [searchType, setSearchType] = useState('repo')
 
   const [recent, setRecent] = useState(loadRecent)
 
@@ -150,7 +148,7 @@ export default function App() {
 
 
 
-      <SearchBar onSearch = {search} searchTypeSetter = {setSearchType}/>
+      <SearchBar onSearch = {search} searchType = {searchType} setSearchType = {setSearchType} query = {query}/>
 
       <RecentSearches
 
@@ -159,8 +157,6 @@ export default function App() {
         onSelect={(val) => {
 
           const [mode, ...rest] = val.split(':')
-
-          handleSearch(rest.join(':'), mode)
 
         }}
 
@@ -215,6 +211,10 @@ export default function App() {
             loadingMore={loadingMore}
 
             showOwner={searchType === 'repo'}
+
+            query = {query}
+
+            searchType = {searchType}
 
           />
 

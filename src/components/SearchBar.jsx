@@ -4,21 +4,13 @@ import { theme, resetButton } from '../styles'
 
 
 
-export default function SearchBar({ onSearch, searchTypeSetter }) {
-
-  const [searchtype, setSearchtype] = useState('repo')
+export default function SearchBar({ onSearch, searchType,setSearchType,query}) {
 
   const [isSmallScreen, setIsSmallScreen] = useState(false)
 
-  const textRef = useRef('')
-
   const timeoutIdRef = useRef(null)
 
-  const inputElRef = useRef(null)
 
-
-
-  // Detect screen size changes for responsive layout
 
   useEffect(() => {
 
@@ -38,6 +30,7 @@ export default function SearchBar({ onSearch, searchTypeSetter }) {
 
   }, [])
 
+  useEffect(()=>{onSearch();},[searchType])
 
 
   const styles = {
@@ -134,52 +127,49 @@ export default function SearchBar({ onSearch, searchTypeSetter }) {
 
   }
 
+  const onClickHandler = (type) => {
+        setSearchType((prev)=>{
+        return type
+      });
+   
+    }
 
-
-  function triggerSearch(type) {
-    if (!textRef.current.trim()) return
+  function triggerSearch() {
+    if (!query?.current?.trim()) return
     if (timeoutIdRef.current) {
       clearTimeout(timeoutIdRef.current)
       timeoutIdRef.current = null
     }
-    onSearch(textRef.current.trim(), type ?? searchtype)
+    onSearch()
   }
 
   function handleChange(e) {
-    textRef.current = e.target.value
+    query.current = e.target.value
     if (timeoutIdRef.current) {
       clearTimeout(timeoutIdRef.current)
       timeoutIdRef.current = null
     }
-    if (textRef.current.trim() !== '') {
+    if (query.current.trim() !== '') {
       timeoutIdRef.current = setTimeout(triggerSearch, 2000)
     }
   }
 
-  function handleSubmit(e) {
-    e.preventDefault()
-    triggerSearch()
-  }
-
-
 
   return (
 
-    <form style={styles.wrapper} onSubmit={handleSubmit}>
+    <form style={styles.wrapper}>
 
       <input
 
-        ref={inputElRef}
-
         type="text"
 
-        placeholder={searchtype === 'user' ? 'Enter GitHub username...' : 'Search repositories...'}
+        placeholder={searchType === 'user' ? 'Enter GitHub username...' : 'Search repositories...'}
 
         onChange={handleChange}
 
         style={styles.input}
 
-        aria-label={searchtype === 'user' ? 'GitHub username' : 'Repository search'}
+        aria-label={searchType === 'user' ? 'GitHub username' : 'Repository search'}
 
       />
 
@@ -189,15 +179,18 @@ export default function SearchBar({ onSearch, searchTypeSetter }) {
 
         <button
           type="button"
-          style={{ ...styles.toggleBtn, ...(searchtype === 'user' ? styles.toggleBtnActive : {}) }}
-          onClick={() => { searchTypeSetter('user'); setSearchtype('user'); triggerSearch('user') }}
+          style={{ ...styles.toggleBtn, ...(searchType === 'user' ? styles.toggleBtnActive : {}) }}
+          onClick={() =>{onClickHandler("user")}}
         >
           User
         </button>
+
+
+
         <button
           type="button"
-          style={{ ...styles.toggleBtn, ...(searchtype === 'repo' ? styles.toggleBtnActive : {}) }}
-          onClick={() => { searchTypeSetter('repo'); setSearchtype('repo'); triggerSearch('repo') }}
+          style={{ ...styles.toggleBtn, ...(searchType === 'repo' ? styles.toggleBtnActive : {}) }}
+          onClick={()=>{onClickHandler("repo")}}
         >
           Repo
         </button>

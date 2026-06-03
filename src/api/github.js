@@ -52,24 +52,28 @@ export function fetchUser(username, devMode) {
 
 
 
-export function fetchRepos(username,mode,page = 1, perPage = 30, devMode) {
+export function fetchRepos(reponame,page = 1, perPage = 10, devMode) {
 
-  if (devMode) {
-
-    if(mode === 'user'){
-
-      return new Promise((resolve) => {
-
-        setTimeout(() => resolve([...dummyRepos].slice(4)), 500)
-
-      })
-
-    }
-
+  if(devMode) {
     return new Promise((resolve) => {
+    setTimeout(() => resolve([...dummyRepos].slice(perPage*(page-1),perPage*page)), 500)
+    })
 
-      setTimeout(() => resolve([...dummyRepos]), 500)
+  }
 
+  return request(
+
+    `/users/${encodeURIComponent(reponame)}/repos?page=${page}&per_page=${perPage}`
+
+  )
+
+}
+
+export function fetchReposbyUser(username,page = 1, perPage = 10, devMode) {
+
+  if(devMode) {
+    return new Promise((resolve) => {
+    setTimeout(() => resolve([...dummyRepos].slice(perPage*(page-1),perPage*page)), 500)
     })
 
   }
@@ -82,34 +86,32 @@ export function fetchRepos(username,mode,page = 1, perPage = 30, devMode) {
 
 }
 
-
-
-export function searchRepos(query, page = 1, perPage = 30, devMode) {
-
-  if (devMode) {
-
-    return new Promise((resolve) => {
-
-      const q = query.toLowerCase()
-
-      const filtered = dummyRepos.filter((r) =>
-
-        r.name.toLowerCase().includes(q) ||
-
-        (r.description && r.description.toLowerCase().includes(q))
-
-      )
-
-      setTimeout(() => resolve(filtered), 500)
-
-    })
-
-  }
-
-  return request(
-
-    `/search/repositories?q=${encodeURIComponent(query)}&page=${page}&per_page=${perPage}`
-
-  )
-
-}
+//export function searchRepos(query, page = 1, perPage = 10, devMode) {
+//
+//  if (devMode) {
+//
+//    return new Promise((resolve) => {
+//
+//      const q = query.toLowerCase()
+//
+//      const filtered = dummyRepos.filter((r) =>
+//
+//        r.name.toLowerCase().includes(q) ||
+//
+//        (r.description && r.description.toLowerCase().includes(q))
+//
+//      )
+//
+//      setTimeout(() => resolve(filtered), 500)
+//
+//    })
+//
+//  }
+//
+//  return request(
+//
+//    `/search/repositories?q=${encodeURIComponent(query)}&page=${page}&per_page=${perPage}`
+//
+//  )
+//
+//}
