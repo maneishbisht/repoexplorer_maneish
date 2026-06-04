@@ -1,89 +1,43 @@
 import { dummyUser, dummyRepos } from '../data'
 
+const BASE_URL = import.meta.env.VITE_BASE_URL || 'http://localhost:3001/api/github';
 
-
-const API_BASE = '/api/github'
-
-
-
-async function request(endpoint) {
-
-  const res = await fetch(`${API_BASE}${endpoint}`)
-
-  if (!res.ok) {
-
-    const body = await res.json().catch(() => ({}))
-
-    const error = new Error(body.error || `Request failed with status ${res.status}`)
-
-    error.status = res.status
-
-    if (res.status === 404) error.code = 'NOT_FOUND'
-
-    else if (res.status === 403) error.code = 'RATE_LIMITED'
-
-    else error.code = 'NETWORK_ERROR'
-
-    throw error
-
-  }
-
-  return res.json()
-
-}
-
-
-
-export function fetchUser(username, devMode) {
-
+export async function fetchUser(username, devMode) {
   if (devMode) {
-
     return new Promise((resolve) => {
-
       setTimeout(() => resolve({ ...dummyUser, login: username }), 600)
-
     })
-
+  } else {
+    const response = await fetch(`${BASE_URL}/users/${encodeURIComponent(username)}`);
+    if (!response.ok) throw new Error('Failed to fetch user');
+    return response.json();
   }
-
-  return request(`/users/${encodeURIComponent(username)}`)
-
 }
 
 
 
-export function fetchRepos(reponame,page = 1, perPage = 10, devMode) {
-
-  if(devMode) {
+export async function fetchRepos(reponame, page = 1, perPage = 10, devMode) {
+  if (devMode) {
     return new Promise((resolve) => {
-    setTimeout(() => resolve([...dummyRepos].slice(perPage*(page-1),perPage*page)), 500)
+      setTimeout(() => resolve([...dummyRepos].slice(perPage * (page - 1), perPage * page)), 500)
     })
-
+  } else {
+    const response = await fetch(`${BASE_URL}/search/repos?q=${encodeURIComponent(reponame)}&page=${page}&per_page=${perPage}`);
+    if (!response.ok) throw new Error('Failed to fetch repositories');
+    return response.json();
   }
-
-  return request(
-
-    `/users/${encodeURIComponent(reponame)}/repos?page=${page}&per_page=${perPage}`
-
-  )
-
 }
 
-export function fetchReposbyUser(username,page = 1, perPage = 10, devMode) {
-
-  if(devMode) {
+export async function fetchReposbyUser(username, page = 1, perPage = 10, devMode) {
+  if (devMode) {
     return new Promise((resolve) => {
-    setTimeout(() => resolve([...dummyRepos].slice(perPage*(page-1),perPage*page)), 500)
+      setTimeout(() => resolve([...dummyRepos].slice(perPage * (page - 1), perPage * page)), 500)
     })
-
+  } else {
+    const response = await fetch(`${BASE_URL}/users/${encodeURIComponent(username)}/repos?page=${page}&per_page=${perPage}`);
+    if (!response.ok) throw new Error('Failed to fetch user repositories');
+    return response.json();
   }
-
-  return request(
-
-    `/users/${encodeURIComponent(username)}/repos?page=${page}&per_page=${perPage}`
-
-  )
-
 }
 
 //export function searchRepos(query, page = 1, perPage = 10, devMode) {

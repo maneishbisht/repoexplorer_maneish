@@ -85,11 +85,12 @@ export default function App() {
 
     loadMore, hasMore, loadingMore, search,searchType,setSearchType,user,clearError
 
-  } = useGitHubUser(true)
+  } = useGitHubUser(false)
 
   const [inputVal,setInputVal] = useState('')
 
   const [recent, setRecent] = useState(loadRecent())
+  
 
   useEffect(() => {
 
