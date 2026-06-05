@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { memo } from 'react'
 
 import { theme, resetButton } from '../styles'
@@ -7,32 +7,11 @@ import { theme, resetButton } from '../styles'
 
 const SearchBar= ({ onSearch, searchType,setSearchType,setRecent,inputVal,setInputVal}) =>{
 
-  const [isSmallScreen, setIsSmallScreen] = useState(false)
-
   const timeoutIdRef = useRef(null)
   const querytext = useRef(inputVal);
   const inputRef = useRef(null);
 
   useEffect(()=>{inputRef.current.value = inputVal;querytext.current = inputVal;triggerSearch(querytext.current)},[inputVal])
-
-
-  useEffect(() => {
-
-    const handleResize = () => setIsSmallScreen(window.innerWidth < 500)
-
-    handleResize()
-
-    window.addEventListener('resize', handleResize)
-
-    return () => {
-
-      window.removeEventListener('resize', handleResize)
-
-      if (timeoutIdRef.current) clearTimeout(timeoutIdRef.current)
-
-    }
-
-  }, [])
 
   useEffect(()=>{onSearch(querytext?.current);},[searchType])
 
@@ -87,11 +66,9 @@ const SearchBar= ({ onSearch, searchType,setSearchType,setRecent,inputVal,setInp
 
       gap: '8px',
 
-      // On small screens, force the button group to a new line
+      flex: '0 1 auto',
 
-      flex: isSmallScreen ? '1 0 100%' : 'none',
-
-      justifyContent: isSmallScreen ? 'flex-end' : 'initial',
+      justifyContent: 'flex-end',
 
     },
 
@@ -175,9 +152,15 @@ const SearchBar= ({ onSearch, searchType,setSearchType,setRecent,inputVal,setInp
   }
 
 
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  };
+
+
   return (
 
-    <form style={styles.wrapper}>
+    <form style={styles.wrapper}onSubmit={handleSubmit}>
 
       <input
 

@@ -14,7 +14,5 @@ export default function errorHandler(err, req, res, _next) {
   if (status === 403) {
     return res.status(403).json({ error: message, code: 'RATE_LIMITED' });
   }
-
-  console.error(`[${status}] ${code}: ${message}`);
   res.status(status).json({ error: message, code });
 }

@@ -20,7 +20,7 @@ export function useGitHubUser(devMode = false) {
 
   const [error, setError] = useState(null)
 
-  const [sortBy, setSortBy] = useState('stars') //* need to add useEffect and create local state inside the RepoList which contains sorted list of the repos when sortBy changes. RepoList will always Use this sorted list of Repos for rendering*/
+  const [sortBy, setSortBy] = useState('stars') 
 
   const [page, setPage] = useState(1)
 
@@ -33,10 +33,7 @@ export function useGitHubUser(devMode = false) {
 
   const search = useCallback(async (queryText) => {
     
-    console.log('hello1')
     if (!queryText.trim()) return
-
-    console.log('hello2')
 
     const isDev = devMode
 
@@ -63,7 +60,11 @@ export function useGitHubUser(devMode = false) {
       if (searchType === 'user') 
         {
         const userData= await Promise.all([fetchUser(queryText.trim(),isDev),fetchReposbyUser(queryText.trim(),1, 10, isDev)])
-        if(!userData[0]){setUser(null);setRepos([]);return}
+        if(!userData[0])
+          {
+          const error = new Error("No such user Profile Found. Please make sure you typed correctly");
+          throw error;
+          }
         setUser(userData[0]);
         if(!userData[1]){setRepos([]);return}
         setRepos(userData[1].sort(SORT_FNS[sortBy] || SORT_FNS.stars))
@@ -74,6 +75,11 @@ export function useGitHubUser(devMode = false) {
       else
       {
         const reposData = await fetchRepos(queryText.trim(), 1, 10, isDev)
+        if(reposData.length===0)
+        {
+        const error = new Error("No such repository exists. Please Make sure you typed the name correctly");
+        throw error;
+        }
         setRepos([...reposData].sort(SORT_FNS[sortBy] || SORT_FNS.stars))
         if(reposData.length === 10){
           setHasMore(true)
@@ -136,9 +142,6 @@ export function useGitHubUser(devMode = false) {
 
 
   const clearError = useCallback(() => setError(null), [])
-
-
-  //const sortedRepos = [...repos].sort(SORT_FNS[sortBy] || SORT_FNS.stars)
 
 
   return {repos,setRepos,loading,error,sortBy,setSortBy,loadMore,hasMore,loadingMore,search,searchType,setSearchType,user,setUser,clearError}

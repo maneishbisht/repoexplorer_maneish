@@ -6,7 +6,7 @@ export default async function rateLimiter(req, res, next) {
   try {
     const current = await redis.incr(key);
     
-    if (current === 1) {
+    if (current === 1){
       await redis.expire(key, process.env.WINDOW_SECONDS || 3600);
     }
 

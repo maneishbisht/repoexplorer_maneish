@@ -28,7 +28,8 @@ export async function fetchFromGitHub(endpoint) {
     },
   });
 
-  if (!res.ok) {
+  if(res.status === 404){const nullData = null;await redis.set(cacheKey, JSON.stringify(nullData), 'EX', process.env.CACHE_TTL);return nullData}
+  if (!res.ok){
     const body = await res.json().catch(() => ({}));
     const error = new Error(body.message || `GitHub API responded with status ${res.status}`);
     error.status = res.status;
