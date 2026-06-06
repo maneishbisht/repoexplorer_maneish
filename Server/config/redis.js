@@ -1,8 +1,6 @@
 import Redis from 'ioredis';
 
-const redis = new Redis({
-  host: (process.env.REDIS_HOST)||'127.0.0.1',
-  port: parseInt((process.env.REDIS_PORT) || '6379'),
+const redis = new Redis(process.env.REDIS_HOST || 'redis://127.0.0.1:6379', {
   maxRetriesPerRequest: null,
   retryStrategy(times) {
     if (times > 3) return null;
