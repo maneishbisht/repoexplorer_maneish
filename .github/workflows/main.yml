@@ -28,8 +28,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/MANEISH_REPOEXPLORER_FRONTEND:${{ github.sha }}
-            ${{ secrets.DOCKER_USERNAME }}/MANEISH_REPOEXPLORER_FRONTEND:latest
+            ${{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_frontend:${{ github.sha }}
+            ${{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_frontend:latest
 
       - name: Build and Push Backend Image
         uses: docker/build-push-action@v5
@@ -38,8 +38,8 @@ jobs:
           file: ./Server/dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/MANEISH_REPOEXPLORER_BACKEND:${{ github.sha }}
-            ${{ secrets.DOCKER_USERNAME }}/MANEISH_REPOEXPLORER_BACKEND:latest
+            ${{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_backend:${{ github.sha }}
+            ${{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_backend:latest
 
       - name: Update Frontend Config Repository
         env:
@@ -54,7 +54,7 @@ jobs:
           
           # Target the specific Deployment YAML file (repoexplorer_frontend.yaml)
           # Updates the image reference field with the new repository and commit SHA tag
-          sed -i 's|image:.*MANEISH_REPOEXPLORER_FRONTEND:.*|image: ${{ secrets.DOCKER_USERNAME }}/MANEISH_REPOEXPLORER_FRONTEND:${{ github.sha }}|g' templates/repoexplorer_frontend.yaml
+          sed -i 's|image:.*maneish_repoexplorer_frontend:.*|image: ${{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_frontend:${{ github.sha }}|g' templates/repoexplorer_frontend.yaml
           
           git add templates/repoexplorer_frontend.yaml
           git commit -m "chore(frontend): update image tag to ${{ github.sha }}"
@@ -73,7 +73,7 @@ jobs:
           
           # Target the specific Deployment YAML file (repoexplorer_backend.yaml)
           # Updates the image reference field with the new repository and commit SHA tag
-          sed -i 's|image:.*MANEISH_REPOEXPLORER_BACKEND:.*|image: ${{ secrets.DOCKER_USERNAME }}/MANEISH_REPOEXPLORER_BACKEND:${{ github.sha }}|g' templates/repoexplorer_backend.yaml
+          sed -i 's|image:.*maneish_repoexplorer_backend:.*|image: ${{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_backend:${{ github.sha }}|g' templates/repoexplorer_backend.yaml
           
           git add templates/repoexplorer_backend.yaml
           git commit -m "chore(backend): update image tag to ${{ github.sha }}"
