@@ -1,5 +1,8 @@
 import redis from '../config/redis.js';
-
+import fs from 'fs';
+const GITHUB_TOKEN_FILE = fs.readFileSync('/mnt/ssm-secrets/GITHUB_TOKEN', 'utf8').trim();
+const GITHUB_API_FILE = fs.readFileSync('/mnt/ssm-secrets/GITHUB_API', 'utf8').trim();
+const CACHE_TTL_FILE = fs.readFileSync('/mnt/ssm-secrets/CACHE_TTL', 'utf8').trim();
 
 export async function fetchFromGitHub(endpoint) {
 
@@ -11,7 +14,7 @@ export async function fetchFromGitHub(endpoint) {
     return JSON.parse(cached);
   }
 
-  const token = process.env.GITHUB_TOKEN;
+  const token = process.env.GITHUB_TOKEN || GITHUB_TOKEN_FILE;
   if (!token) {
     const err = new Error('GitHub token not configured');
     err.status = 500;
@@ -19,7 +22,7 @@ export async function fetchFromGitHub(endpoint) {
     throw err;
   }
 
-  const url = `${process.env.GITHUB_API}/${endpoint}`;
+  const url = `${process.env.GITHUB_API}/${endpoint}` || `${GITHUB_API_FILE}/${endpoint}`;
   const res = await fetch(url, {
     headers: {
       Accept: 'application/vnd.github.v3+json',
@@ -28,7 +31,7 @@ export async function fetchFromGitHub(endpoint) {
     },
   });
 
-  if(res.status === 404){const nullData = null;await redis.set(cacheKey, JSON.stringify(nullData), 'EX', process.env.CACHE_TTL);return nullData}
+  if(res.status === 404){const nullData = null;await redis.set(cacheKey, JSON.stringify(nullData), 'EX', process.env.CACHE_TTL || CACHE_TTL_FILE);return nullData}
   if (!res.ok){
     const body = await res.json().catch(() => ({}));
     const error = new Error(body.message || `GitHub API responded with status ${res.status}`);
@@ -41,7 +44,7 @@ export async function fetchFromGitHub(endpoint) {
 
   const data = await res.json();
 
-  await redis.set(cacheKey, JSON.stringify(data), 'EX', process.env.CACHE_TTL);
+  await redis.set(cacheKey, JSON.stringify(data), 'EX', process.env.CACHE_TTL || CACHE_TTL_FILE);
   
   return data;
 }
