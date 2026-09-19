@@ -14,7 +14,9 @@ export async function fetchFromGitHub(endpoint) {
     return JSON.parse(cached);
   }
 
-  const token = process.env.GITHUB_TOKEN || GITHUB_TOKEN_FILE;
+  const env_git_token = process.env.GITHUB_TOKEN;
+
+  const token = env_git_token || GITHUB_TOKEN_FILE;
   if (!token) {
     const err = new Error('GitHub token not configured');
     err.status = 500;
