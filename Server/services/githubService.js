@@ -1,8 +1,8 @@
 import redis from '../config/redis.js';
 import fs from 'fs';
-const GITHUB_TOKEN_FILE = fs.readFileSync('/mnt/ssm-secrets/GITHUB_TOKEN', 'utf8').trim();
-const GITHUB_API_FILE = fs.readFileSync('/mnt/ssm-secrets/GITHUB_API', 'utf8').trim();
-const CACHE_TTL_FILE = fs.readFileSync('/mnt/ssm-secrets/CACHE_TTL', 'utf8').trim();
+//const GITHUB_TOKEN_FILE = fs.readFileSync('/mnt/ssm-secrets/GITHUB_TOKEN', 'utf8').trim();
+//const GITHUB_API_FILE = fs.readFileSync('/mnt/ssm-secrets/GITHUB_API', 'utf8').trim();
+//const CACHE_TTL_FILE = fs.readFileSync('/mnt/ssm-secrets/CACHE_TTL', 'utf8').trim();
 
 export async function fetchFromGitHub(endpoint) {
 
@@ -16,7 +16,7 @@ export async function fetchFromGitHub(endpoint) {
 
   const env_git_token = process.env.GITHUB_TOKEN;
 
-  const token = env_git_token || GITHUB_TOKEN_FILE;
+  const token = env_git_token;
   if (!token) {
     const err = new Error('GitHub token not configured');
     err.status = 500;
@@ -26,7 +26,7 @@ export async function fetchFromGitHub(endpoint) {
 
   const API = process.env.GITHUB_API;
 
-  const url = `${API}/${endpoint}` || `${GITHUB_API_FILE}/${endpoint}`;
+  const url = `${API}/${endpoint}`;
   const res = await fetch(url, {
     headers: {
       Accept: 'application/vnd.github.v3+json',
@@ -37,7 +37,7 @@ export async function fetchFromGitHub(endpoint) {
 
   const TTL = process.env.CACHE_TTL;
   
-  if(res.status === 404){const nullData = null;await redis.set(cacheKey, JSON.stringify(nullData), 'EX', TTL || CACHE_TTL_FILE);return nullData}
+  if(res.status === 404){const nullData = null;await redis.set(cacheKey, JSON.stringify(nullData), 'EX', TTL);return nullData}
   if (!res.ok){
     const body = await res.json().catch(() => ({}));
     const error = new Error(body.message || `GitHub API responded with status ${res.status}`);
@@ -50,7 +50,7 @@ export async function fetchFromGitHub(endpoint) {
 
   const data = await res.json();
 
-  await redis.set(cacheKey, JSON.stringify(data), 'EX', TTL || CACHE_TTL_FILE);
+  await redis.set(cacheKey, JSON.stringify(data), 'EX', TTL);
   
   return data;
 }
