@@ -1,8 +1,29 @@
 import redis from '../config/redis.js';
 import fs from 'fs';
-const GITHUB_TOKEN_FILE = fs.readFileSync('/mnt/ssm-secrets/GITHUB_TOKEN', 'utf8').trim();
-const GITHUB_API_FILE = fs.readFileSync('/mnt/ssm-secrets/GITHUB_API', 'utf8').trim();
-const CACHE_TTL_FILE = fs.readFileSync('/mnt/ssm-secrets/CACHE_TTL', 'utf8').trim();
+
+// Safely read files with fallbacks if they do not exist
+let GITHUB_TOKEN_FILE, GITHUB_API_FILE, CACHE_TTL_FILE;
+
+try {
+  GITHUB_TOKEN_FILE = fs.existsSync('/mnt/ssm-secrets/GITHUB_TOKEN') 
+    ? fs.readFileSync('/mnt/ssm-secrets/GITHUB_TOKEN', 'utf8').trim() 
+    : undefined;
+} catch { GITHUB_TOKEN_FILE = undefined; }
+
+try {
+  GITHUB_API_FILE = fs.existsSync('/mnt/ssm-secrets/GITHUB_API') 
+    ? fs.readFileSync('/mnt/ssm-secrets/GITHUB_API', 'utf8').trim() 
+    : undefined;
+} catch { GITHUB_API_FILE = undefined; }
+
+try {
+  CACHE_TTL_FILE = fs.existsSync('/mnt/ssm-secrets/CACHE_TTL') 
+    ? fs.readFileSync('/mnt/ssm-secrets/CACHE_TTL', 'utf8').trim() 
+    : undefined;
+} catch { CACHE_TTL_FILE = undefined; }
+
+
+
 
 export async function fetchFromGitHub(endpoint) {
 
