@@ -27,7 +27,7 @@ export async function fetchFromGitHub(endpoint) {
     headers: {
       Accept: 'application/vnd.github.v3+json',
       'User-Agent': 'RepoExplorer-Server',
-      Authorization: `Bearer ${token}`,
+      Authorization: `token ${token}`,
     },
   });
 
