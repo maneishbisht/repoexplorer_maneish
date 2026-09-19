@@ -22,7 +22,9 @@ export async function fetchFromGitHub(endpoint) {
     throw err;
   }
 
-  const url = `${process.env.GITHUB_API}/${endpoint}` || `${GITHUB_API_FILE}/${endpoint}`;
+  const API = process.env.GITHUB_API;
+
+  const url = `${API}/${endpoint}` || `${GITHUB_API_FILE}/${endpoint}`;
   const res = await fetch(url, {
     headers: {
       Accept: 'application/vnd.github.v3+json',
@@ -31,7 +33,9 @@ export async function fetchFromGitHub(endpoint) {
     },
   });
 
-  if(res.status === 404){const nullData = null;await redis.set(cacheKey, JSON.stringify(nullData), 'EX', process.env.CACHE_TTL || CACHE_TTL_FILE);return nullData}
+  const TTL = process.env.CACHE_TTL;
+  
+  if(res.status === 404){const nullData = null;await redis.set(cacheKey, JSON.stringify(nullData), 'EX', TTL || CACHE_TTL_FILE);return nullData}
   if (!res.ok){
     const body = await res.json().catch(() => ({}));
     const error = new Error(body.message || `GitHub API responded with status ${res.status}`);
@@ -44,7 +48,7 @@ export async function fetchFromGitHub(endpoint) {
 
   const data = await res.json();
 
-  await redis.set(cacheKey, JSON.stringify(data), 'EX', process.env.CACHE_TTL || CACHE_TTL_FILE);
+  await redis.set(cacheKey, JSON.stringify(data), 'EX', TTL || CACHE_TTL_FILE);
   
   return data;
 }
