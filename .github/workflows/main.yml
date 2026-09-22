@@ -47,13 +47,12 @@ jobs:
       - name: Update Frontend Config Repository
         env:
           PAT_TOKEN: ${{ secrets.CONFIG_REPO_PAT }}
-          # Dynamically map the repo name based on the active branch
           FRONTEND_REPO: ${{ github.ref_name == 'main' && 'REPO_EXPLORER_FRONTEND_CONFIG' || 'REPO_EXPLORER_FRONTEND_CONFIG_TEST' }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Clone the correct repository dynamically using shell variable
+          # Clone the correct frontend config repo dynamically using shell variable
           git clone https://\({{ secrets.CONFIG_REPO_PAT }}@github.com/\){{ github.repository_owner }}/$FRONTEND_REPO.git frontend-config
           cd frontend-config
           
@@ -67,13 +66,12 @@ jobs:
       - name: Update Backend Config Repository
         env:
           PAT_TOKEN: ${{ secrets.CONFIG_REPO_PAT }}
-          # Dynamically map the repo name based on the active branch
           BACKEND_REPO: ${{ github.ref_name == 'main' && 'REPO_EXPLORER_BACKEND_CONFIG' || 'REPO_EXPLORER_BACKEND_CONFIG_TEST' }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Clone the correct repository dynamically using shell variable
+          # Clone the correct backend config repo dynamically using shell variable
           git clone https://\({{ secrets.CONFIG_REPO_PAT }}@github.com/\){{ github.repository_owner }}/$BACKEND_REPO.git backend-config
           cd backend-config
           
