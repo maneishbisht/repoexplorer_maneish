@@ -52,11 +52,9 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Clone the correct frontend config repo dynamically using shell variable
           git clone https://\({{ secrets.CONFIG_REPO_PAT }}@github.com/\){{ github.repository_owner }}/$FRONTEND_REPO.git frontend-config
           cd frontend-config
           
-          # Update deployment YAML image reference
           sed -i 's|image:.*maneish_repoexplorer_frontend:.*|image: \({{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_frontend:\){{ github.sha }}|g' templates/repoexplorer_frontend.yaml
           
           git add templates/repoexplorer_frontend.yaml
@@ -71,11 +69,9 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Clone the correct backend config repo dynamically using shell variable
           git clone https://\({{ secrets.CONFIG_REPO_PAT }}@github.com/\){{ github.repository_owner }}/$BACKEND_REPO.git backend-config
           cd backend-config
           
-          # Update deployment YAML image reference
           sed -i 's|image:.*maneish_repoexplorer_backend:.*|image: \({{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_backend:\){{ github.sha }}|g' templates/repoexplorer_backend.yaml
           
           git add templates/repoexplorer_backend.yaml
