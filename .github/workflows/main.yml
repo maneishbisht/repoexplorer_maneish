@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - test-branch  # Replace with your actual test branch name if different
 
 jobs:
   build-and-push:
@@ -46,16 +47,17 @@ jobs:
       - name: Update Frontend Config Repository
         env:
           PAT_TOKEN: ${{ secrets.CONFIG_REPO_PAT }}
+          # Dynamically map the repo name based on the active branch
+          FRONTEND_REPO: ${{ github.ref_name == 'main' && 'REPO_EXPLORER_FRONTEND_CONFIG' || 'REPO_EXPLORER_FRONTEND_CONFIG_TEST' }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Clone the frontend config repo using the PAT and owner context
-          git clone https://\({{ secrets.CONFIG_REPO_PAT }}@github.com/\){{ github.repository_owner }}/REPO_EXPLORER_FRONTEND_CONFIG.git frontend-config
+          # Clone the correct repository dynamically using shell variable
+          git clone https://\({{ secrets.CONFIG_REPO_PAT }}@github.com/\){{ github.repository_owner }}/$FRONTEND_REPO.git frontend-config
           cd frontend-config
           
-          # Target the specific Deployment YAML file (repoexplorer_frontend.yaml)
-          # Updates the image reference field with the new repository and commit SHA tag
+          # Update deployment YAML image reference
           sed -i 's|image:.*maneish_repoexplorer_frontend:.*|image: \({{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_frontend:\){{ github.sha }}|g' templates/repoexplorer_frontend.yaml
           
           git add templates/repoexplorer_frontend.yaml
@@ -65,16 +67,17 @@ jobs:
       - name: Update Backend Config Repository
         env:
           PAT_TOKEN: ${{ secrets.CONFIG_REPO_PAT }}
+          # Dynamically map the repo name based on the active branch
+          BACKEND_REPO: ${{ github.ref_name == 'main' && 'REPO_EXPLORER_BACKEND_CONFIG' || 'REPO_EXPLORER_BACKEND_CONFIG_TEST' }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Clone the backend config repo using the PAT and owner context
-          git clone https://\({{ secrets.CONFIG_REPO_PAT }}@github.com/\){{ github.repository_owner }}/REPO_EXPLORER_BACKEND_CONFIG.git backend-config
+          # Clone the correct repository dynamically using shell variable
+          git clone https://\({{ secrets.CONFIG_REPO_PAT }}@github.com/\){{ github.repository_owner }}/$BACKEND_REPO.git backend-config
           cd backend-config
           
-          # Target the specific Deployment YAML file (repoexplorer_backend.yaml)
-          # Updates the image reference field with the new repository and commit SHA tag
+          # Update deployment YAML image reference
           sed -i 's|image:.*maneish_repoexplorer_backend:.*|image: \({{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_backend:\){{ github.sha }}|g' templates/repoexplorer_backend.yaml
           
           git add templates/repoexplorer_backend.yaml
