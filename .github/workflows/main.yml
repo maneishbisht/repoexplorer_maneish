@@ -22,6 +22,19 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Set Environment Variables
+        id: vars
+        run: |
+          if [ "${{ github.ref_name }}" == "main" ]; then
+            echo "FRONTEND_IMAGE=\({{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_frontend" >>\)GITHUB_OUTPUT
+            echo "BACKEND_IMAGE=\({{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_backend" >>\)GITHUB_OUTPUT
+            echo "IS_PROD=true" >> $GITHUB_OUTPUT
+          else
+            echo "FRONTEND_IMAGE=\({{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_frontend_test" >>\)GITHUB_OUTPUT
+            echo "BACKEND_IMAGE=\({{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_backend_test" >>\)GITHUB_OUTPUT
+            echo "IS_PROD=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Build and Push Frontend Image
         uses: docker/build-push-action@v5
         with:
@@ -31,8 +44,8 @@ jobs:
           build-args: |
             VITE_BASE_URL=${{ secrets.VITE_BASE_URL }}
           tags: |
-            \({{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_frontend:\){{ github.sha }}
-            ${{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_frontend:latest
+            \({{ steps.vars.outputs.FRONTEND_IMAGE }}:\){{ github.sha }}
+            ${{ steps.vars.outputs.FRONTEND_IMAGE }}:latest
 
       - name: Build and Push Backend Image
         uses: docker/build-push-action@v5
@@ -41,39 +54,75 @@ jobs:
           file: ./Server/dockerfile
           push: true
           tags: |
-            \({{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_backend:\){{ github.sha }}
-            ${{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_backend:latest
+            \({{ steps.vars.outputs.BACKEND_IMAGE }}:\){{ github.sha }}
+            ${{ steps.vars.outputs.BACKEND_IMAGE }}:latest
 
       - name: Update Frontend Config Repository
         env:
           PAT_TOKEN: ${{ secrets.CONFIG_REPO_PAT }}
-          FRONTEND_REPO: ${{ github.ref_name == 'main' && 'REPO_EXPLORER_FRONTEND_CONFIG' || 'REPO_EXPLORER_FRONTEND_CONFIG_TEST' }}
+          FRONTEND_IMAGE: ${{ steps.vars.outputs.FRONTEND_IMAGE }}
+          IS_PROD: ${{ steps.vars.outputs.IS_PROD }}
+          COMMIT_SHA: ${{ github.sha }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          git clone https://\({{ secrets.CONFIG_REPO_PAT }}@github.com/\){{ github.repository_owner }}/$FRONTEND_REPO.git frontend-config
+          git clone https://\({{ secrets.CONFIG_REPO_PAT }}@github.com/\){{ github.repository_owner }}/REPO_EXPLORER_FRONTEND_CONFIG.get frontend-config 2>/dev/null || git clone https://\({{ secrets.CONFIG_REPO_PAT }}@github.com/\){{ github.repository_owner }}/REPO_EXPLORER_FRONTEND_CONFIG.git frontend-config
           cd frontend-config
           
-          sed -i 's|image:.*maneish_repoexplorer_frontend:.*|image: \({{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_frontend:\){{ github.sha }}|g' templates/repoexplorer_frontend.yaml
+          if [ "$IS_PROD" == "true" ]; then
+            FILES="values_prod.yaml"
+          else
+            FILES="values_dev.yaml values_test.yaml"
+          fi
+
+          for f in $FILES; do
+            if [ -f "$f" ]; then
+              # Safely update image repository and tag fields matching the YAML layout
+              sed -i "/^image:/,/^[a-zA-Z]/ s|repository:.*|repository: \(FRONTEND_IMAGE|" "\)f"
+              sed -i "/^image:/,/^[a-zA-Z]/ s|tag:.*|tag: \(COMMIT_SHA|" "\)f"
+              git add "$f"
+            fi
+          done
           
-          git add templates/repoexplorer_frontend.yaml
-          git commit -m "chore(frontend): update image tag to ${{ github.sha }}"
+          if [ "$IS_PROD" == "true" ]; then
+            git commit -m "chore(frontend): update prod image tag to $COMMIT_SHA"
+          else
+            git commit -m "chore(frontend): update dev and test image tags to $COMMIT_SHA"
+          fi
           git push origin main
 
       - name: Update Backend Config Repository
         env:
           PAT_TOKEN: ${{ secrets.CONFIG_REPO_PAT }}
-          BACKEND_REPO: ${{ github.ref_name == 'main' && 'REPO_EXPLORER_BACKEND_CONFIG' || 'REPO_EXPLORER_BACKEND_CONFIG_TEST' }}
+          BACKEND_IMAGE: ${{ steps.vars.outputs.BACKEND_IMAGE }}
+          IS_PROD: ${{ steps.vars.outputs.IS_PROD }}
+          COMMIT_SHA: ${{ github.sha }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           
-          git clone https://\({{ secrets.CONFIG_REPO_PAT }}@github.com/\){{ github.repository_owner }}/$BACKEND_REPO.git backend-config
+          git clone https://\({{ secrets.CONFIG_REPO_PAT }}@github.com/\){{ github.repository_owner }}/REPO_EXPLORER_BACKEND_CONFIG.git backend-config
           cd backend-config
           
-          sed -i 's|image:.*maneish_repoexplorer_backend:.*|image: \({{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_backend:\){{ github.sha }}|g' templates/repoexplorer_backend.yaml
+          if [ "$IS_PROD" == "true" ]; then
+            FILES="values_prod.yaml"
+          else
+            FILES="values_dev.yaml values_test.yaml"
+          fi
+
+          for f in $FILES; do
+            if [ -f "$f" ]; then
+              # Safely update image repository and tag fields matching the YAML layout
+              sed -i "/^image:/,/^[a-zA-Z]/ s|repository:.*|repository: \(BACKEND_IMAGE|" "\)f"
+              sed -i "/^image:/,/^[a-zA-Z]/ s|tag:.*|tag: \(COMMIT_SHA|" "\)f"
+              git add "$f"
+            fi
+          done
           
-          git add templates/repoexplorer_backend.yaml
-          git commit -m "chore(backend): update image tag to ${{ github.sha }}"
+          if [ "$IS_PROD" == "true" ]; then
+            git commit -m "chore(backend): update prod image tag to $COMMIT_SHA"
+          else
+            git commit -m "chore(backend): update dev and test image tags to $COMMIT_SHA"
+          fi
           git push origin main
