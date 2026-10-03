@@ -1,7 +1,7 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-# Declare the build argument (can be left blank or dummy for runtime injection)
+# Declare the build argument (can be left blank or dummy for runtime injection in case...)
 ARG VITE_BASE_URL
 ENV VITE_BASE_URL=$VITE_BASE_URL
 
