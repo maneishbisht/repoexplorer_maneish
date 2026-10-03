@@ -118,7 +118,7 @@ jobs:
               git commit -m "chore(frontend): update dev and test image tags to $COMMIT_SHA"
             fi
 
-            git push origin main
+            git push origin master
           fi
 
       # ---------------------------------------------------------
@@ -172,5 +172,5 @@ jobs:
               git commit -m "chore(backend): update dev and test image tags to $COMMIT_SHA"
             fi
 
-            git push origin main
+            git push origin master
           fi
