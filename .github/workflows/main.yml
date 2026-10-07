@@ -27,15 +27,15 @@ jobs:
         id: vars
         shell: bash
         run: |
-          if [ "$GITHUB_REF_NAME" = "main" ]; then
-            echo "FRONTEND_IMAGE=${{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_frontend" >> "$GITHUB_OUTPUT"
-            echo "BACKEND_IMAGE=${{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_backend" >> "$GITHUB_OUTPUT"
-            echo "IS_PROD=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "FRONTEND_IMAGE=${{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_frontend_test" >> "$GITHUB_OUTPUT"
-            echo "BACKEND_IMAGE=${{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_backend_test" >> "$GITHUB_OUTPUT"
-            echo "IS_PROD=false" >> "$GITHUB_OUTPUT"
-          fi
+          #if [ "$GITHUB_REF_NAME" = "main" ]; then
+          # echo "FRONTEND_IMAGE=${{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_frontend" >> "$GITHUB_OUTPUT"
+          # echo "BACKEND_IMAGE=${{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_backend" >> "$GITHUB_OUTPUT"
+          # echo "IS_PROD=true" >> "$GITHUB_OUTPUT"
+          #else
+          echo "FRONTEND_IMAGE=${{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_frontend_test" >> "$GITHUB_OUTPUT"
+          echo "BACKEND_IMAGE=${{ secrets.DOCKER_USERNAME }}/maneish_repoexplorer_backend_test" >> "$GITHUB_OUTPUT"
+          echo "IS_PROD=false" >> "$GITHUB_OUTPUT"
+          #fi
 
       # ---------------------------------------------------------
       # FRONTEND
